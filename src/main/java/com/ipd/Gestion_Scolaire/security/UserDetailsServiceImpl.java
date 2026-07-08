@@ -6,6 +6,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -15,7 +18,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
+        if (!StringUtils.hasText(email)) {
+            throw new UsernameNotFoundException("Email utilisateur obligatoire");
+        }
+        String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
+        return userRepository.findByEmail(normalizedEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User " + email + " introuvable"));
     }
 }

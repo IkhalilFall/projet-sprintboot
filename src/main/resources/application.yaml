@@ -1,14 +1,11 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/gestion_scolaire
-    username: postgres
-    password: root
-    driver-class-name: org.postgresql.Driver
-
+  profiles:
+    active: dev
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -16,11 +13,13 @@ spring:
 server:
   port: 8085
 
-app:
-  jwt:
-    secret: XFLF3kXL5ujR0bSJ8HLMPoTYSOSV5pECRxUjWeS0qZvTfsHn8056pWaHoDwvZcnC13dv9VvwVEEAGrbLmHX9gA==
-    access-token-expiration: 900000
-    refresh-token-expiration: 604800000
-
-upload:
-  dir: uploads/
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    display-request-duration: true
+    filter: true
+    show-common-extensions: true
+  show-actuator: true

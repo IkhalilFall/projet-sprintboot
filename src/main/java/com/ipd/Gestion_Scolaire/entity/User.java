@@ -22,11 +22,15 @@ public class User implements UserDetails {
 
     private String nom;
     private String prenom;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "varchar(255)") 
+    @Column(nullable = false, columnDefinition = "varchar(255)")
     private Role role;
 
     @Override
