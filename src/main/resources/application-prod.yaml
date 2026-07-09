@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gestion_scolaire
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:XFLF3kXL5ujR0bSJ8HLMPoTYSOSV5pECRxUjWeS0qZvTfsHn8056pWaHoDwvZcnC13dv9VvwVEEAGrbLmHX9gA==}
+    access-token-expiration: 900000
+    refresh-token-expiration: 604800000
+
+upload:
+  dir: uploads/
