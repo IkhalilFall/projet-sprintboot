@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/gestion_scolaire
     username: postgres
-    password: root
+    password: Passer1234
     driver-class-name: org.postgresql.Driver
 
   jpa:
