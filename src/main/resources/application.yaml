@@ -1,11 +1,14 @@
 spring:
-  profiles:
-    active: dev
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gestion_scolaire
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
   jpa:
-    show-sql: false
+    hibernate:
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
@@ -13,13 +16,11 @@ spring:
 server:
   port: 8085
 
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    enabled: true
-    display-request-duration: true
-    filter: true
-    show-common-extensions: true
-  show-actuator: true
+app:
+  jwt:
+    secret: XFLF3kXL5ujR0bSJ8HLMPoTYSOSV5pECRxUjWeS0qZvTfsHn8056pWaHoDwvZcnC13dv9VvwVEEAGrbLmHX9gA==
+    access-token-expiration: 900000
+    refresh-token-expiration: 604800000
+
+upload:
+  dir: uploads/
