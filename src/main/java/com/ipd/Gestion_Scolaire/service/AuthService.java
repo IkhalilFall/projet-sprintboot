@@ -35,8 +35,11 @@ public class AuthService {
     @Value("${app.jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
 
+
     public AuthResponse register(RegisterRequest request) {
+
         String email = normalizeEmail(request.getEmail());
+
         if (userRepository.existsByEmail(email)) {
             throw new ConflictException("Utilisateur déjà existant");
         }
@@ -46,11 +49,16 @@ public class AuthService {
         }
 
         Role role;
+
         try {
-            role = Role.valueOf(requireText(request.getRole(), "Le rôle est obligatoire").toUpperCase(Locale.ROOT));
+            role = Role.valueOf(
+                    requireText(request.getRole(), "Le rôle est obligatoire")
+                            .toUpperCase(Locale.ROOT)
+            );
         } catch (Exception ex) {
             throw new IllegalArgumentException("Rôle utilisateur invalide");
         }
+
 
         User user = User.builder()
                 .nom(request.getNom())
@@ -59,70 +67,164 @@ public class AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(role)
                 .build();
+
+
         userRepository.save(user);
+
 
         String accessToken = jwtService.generateAccessToken(user.getEmail());
         String refreshToken = createRefreshToken(user);
-        return new AuthResponse(accessToken, refreshToken, "Bearer");
+
+
+        return new AuthResponse(
+                accessToken,
+                refreshToken,
+                "Bearer"
+        );
     }
+
 
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        String email = normalizeEmail(request.getEmail());
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BadCredentialsException("Identifiants invalides"));
 
-        if (!passwordEncoder.matches(requireText(request.getPassword(), "Le mot de passe est obligatoire"), user.getPassword())) {
+        String email = normalizeEmail(request.getEmail());
+
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new BadCredentialsException("Identifiants invalides")
+                );
+
+
+        if (!passwordEncoder.matches(
+                requireText(
+                        request.getPassword(),
+                        "Le mot de passe est obligatoire"
+                ),
+                user.getPassword()
+        )) {
+
             throw new BadCredentialsException("Identifiants invalides");
         }
 
-        String accessToken = jwtService.generateAccessToken(user.getEmail());
-        String refreshToken = createRefreshToken(user);
-        return new AuthResponse(accessToken, refreshToken, "Bearer");
+
+        String accessToken =
+                jwtService.generateAccessToken(user.getEmail());
+
+
+        String refreshToken =
+                createRefreshToken(user);
+
+
+        return new AuthResponse(
+                accessToken,
+                refreshToken,
+                "Bearer"
+        );
     }
+
+
 
     @Transactional
     public AuthResponse refreshToken(RefreshTokenRequest request) {
-        RefreshToken refreshToken = refreshTokenRepository
-                .findByToken(requireText(request.getRefreshToken(), "Le refresh token est obligatoire"))
-                .orElseThrow(() -> new BadCredentialsException("Refresh token invalide"));
 
-        if (refreshToken.getExpiryDate().isBefore(Instant.now())) {
+
+        RefreshToken refreshToken =
+                refreshTokenRepository
+                        .findByToken(
+                                requireText(
+                                        request.getRefreshToken(),
+                                        "Le refresh token est obligatoire"
+                                )
+                        )
+                        .orElseThrow(() ->
+                                new BadCredentialsException(
+                                        "Refresh token invalide"
+                                )
+                        );
+
+
+        if (refreshToken.getExpiryDate()
+                .isBefore(Instant.now())) {
+
+
             refreshTokenRepository.delete(refreshToken);
-            throw new BadCredentialsException("Refresh token expiré");
+
+            throw new BadCredentialsException(
+                    "Refresh token expiré"
+            );
         }
 
+
         User user = refreshToken.getUser();
-        String newAccessToken = jwtService.generateAccessToken(user.getEmail());
-        return new AuthResponse(newAccessToken, refreshToken.getToken(), "Bearer");
+
+
+        String newAccessToken =
+                jwtService.generateAccessToken(
+                        user.getEmail()
+                );
+
+
+        return new AuthResponse(
+                newAccessToken,
+                refreshToken.getToken(),
+                "Bearer"
+        );
     }
+
+
 
     @Transactional
     private String createRefreshToken(User user) {
 
-        RefreshToken refreshToken = refreshTokenRepository
-                .findByUser(user)
-                .orElse(new RefreshToken());
+
+        RefreshToken refreshToken =
+                refreshTokenRepository
+                        .findByUser(user)
+                        .orElse(new RefreshToken());
+
 
         refreshToken.setUser(user);
-        refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiryDate(
-                Instant.now().plusMillis(refreshTokenExpiration)
+
+
+        refreshToken.setToken(
+                UUID.randomUUID().toString()
         );
 
+
+        refreshToken.setExpiryDate(
+                Instant.now()
+                        .plusMillis(refreshTokenExpiration)
+        );
+
+
         refreshTokenRepository.save(refreshToken);
+
 
         return refreshToken.getToken();
     }
 
+
+
     private String normalizeEmail(String email) {
-        return requireText(email, "L'email est obligatoire").toLowerCase(Locale.ROOT);
+
+        return requireText(
+                email,
+                "L'email est obligatoire"
+        ).toLowerCase(Locale.ROOT);
     }
 
-    private String requireText(String value, String message) {
+
+
+    private String requireText(
+            String value,
+            String message
+    ) {
+
         if (!StringUtils.hasText(value)) {
             throw new IllegalArgumentException(message);
         }
+
         return value.trim();
     }
 }
