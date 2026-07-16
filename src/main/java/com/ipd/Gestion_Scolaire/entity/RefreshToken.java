@@ -1,14 +1,17 @@
 package com.ipd.Gestion_Scolaire.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.Instant;
 
 @Entity
+@Table(name = "refresh_token")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class RefreshToken {
 
     @Id
@@ -22,5 +25,6 @@ public class RefreshToken {
     private Instant expiryDate;
 
     @OneToOne
+    @JoinColumn(name = "user_id", unique = true)
     private User user;
 }

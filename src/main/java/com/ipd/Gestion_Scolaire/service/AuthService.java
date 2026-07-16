@@ -99,12 +99,19 @@ public class AuthService {
 
     @Transactional
     private String createRefreshToken(User user) {
-        refreshTokenRepository.deleteByUser(user);
-        RefreshToken refreshToken = new RefreshToken();
+
+        RefreshToken refreshToken = refreshTokenRepository
+                .findByUser(user)
+                .orElse(new RefreshToken());
+
         refreshToken.setUser(user);
         refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenExpiration));
+        refreshToken.setExpiryDate(
+                Instant.now().plusMillis(refreshTokenExpiration)
+        );
+
         refreshTokenRepository.save(refreshToken);
+
         return refreshToken.getToken();
     }
 
