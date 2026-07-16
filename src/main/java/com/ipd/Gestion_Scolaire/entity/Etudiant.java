@@ -19,6 +19,8 @@ public class Etudiant {
     private String email;
     private String telephone;
     private String matricule;
+    private String photoUrl;
+    private String documentUrl;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
