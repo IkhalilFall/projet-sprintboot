@@ -7,11 +7,12 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
+    show-sql: false
 
 app:
   jwt:
-    secret: ${JWT_SECRET:XFLF3kXL5ujR0bSJ8HLMPoTYSOSV5pECRxUjWeS0qZvTfsHn8056pWaHoDwvZcnC13dv9VvwVEEAGrbLmHX9gA==}
+    secret: ${JWT_SECRET}
     access-token-expiration: 900000
     refresh-token-expiration: 604800000
 
